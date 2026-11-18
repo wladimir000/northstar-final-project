@@ -127,7 +127,14 @@ def test_native_async_generation_preserves_usage_and_limits(
         assert body["models"] == [body["model"], "openrouter/free"]
     else:
         assert "models" not in body
-    assert body["messages"] == [{"role": "user", "content": "Question"}]
+    assert len(body["messages"]) == 2
+    assert body["messages"][0]["role"] == "system"
+    assert "Northstar" in body["messages"][0]["content"]
+    assert "Never claim" in body["messages"][0]["content"]
+    assert body["messages"][1] == {
+        "role": "user",
+        "content": "Question",
+    }
     assert requests[0].extensions["timeout"]["read"] == 30
     assert provider.client.model_dump()["max_retries"] == 0
 
